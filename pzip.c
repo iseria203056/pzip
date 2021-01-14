@@ -39,7 +39,7 @@ pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t cthreadlock = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t vaild = PTHREAD_COND_INITIALIZER;
 
-struct resultSet
+struct resultSet // temp of the zipped content 
 {
     char character;
     int char_count;
@@ -55,17 +55,17 @@ struct buffer //part of contain of text file
 
 struct buffer *bufferlist;
 
-void bufferlist_init(int size)
+void bufferlist_init(int size)// init the array of buffer
 {
     bufferlist = (struct buffer *)malloc(sizeof(struct buffer) * size);
 }
 
-void *handleFile(void *arg)
+void *handleFile(void *arg) // divide text files for pthread to operate
 {
     struct stat st;
     int size;
     char **filePath = (char **)arg;
-    for (int i = 0; i < numOfFile; i++)
+    for (int i = 0; i < numOfFile; i++)// get the size to init the array
     {
         size = stat(filePath[i], &st);
         size = st.st_size;
@@ -79,7 +79,7 @@ void *handleFile(void *arg)
 
     bufferlist_init(listsize);
 
-    for (int i = 0; i < numOfFile; i++)
+    for (int i = 0; i < numOfFile; i++)// create Buffer
     {
         int fp = open(filePath[i], O_RDWR);
         char *filePointer;
@@ -118,7 +118,7 @@ void *handleFile(void *arg)
     return 0;
 }
 
-void compress(int bufferIndex)
+void compress(int bufferIndex)//compress text content
 {
     int char_count = 0;
     char current_char = 0;
@@ -126,7 +126,7 @@ void compress(int bufferIndex)
     char *textString = bufferlist[bufferIndex].content;
     struct resultSet *result = (struct resultSet *)malloc(sizeof(struct resultSet) * max);
     int r_index = 0;
-    for (int i = 0; i < max; i++)
+    for (int i = 0; i < max; i++)//loop all char in textString
     {
         if (textString[i] == current_char)
         {
@@ -160,7 +160,7 @@ void compress(int bufferIndex)
     bufferlist[bufferIndex].result = result;
 }
 
-void *compressText(void *null)
+void *compressText(void *null)//call compress method to compress content of buffer one by one
 {
 
     int do_index;
@@ -191,7 +191,7 @@ void *compressText(void *null)
     return 0;
 }
 
-void output()
+void output()// print out the zipped content
 {
     char char_temp = 0;
     int num_temp = 0;
@@ -261,13 +261,13 @@ int main(int argc, char **argv)
 
     for (int i = 0; i < argc - 1; i++)
     {
-        if ((dir = opendir(argv[i + 1])) != NULL)
+        if ((dir = opendir(argv[i + 1])) != NULL)//get the file in dir 
         {
             numOfFile -= 1;
             while ((ent = readdir(dir)) != NULL)
             {
 
-                if ((ent->d_type) == 8) //not dir
+                if ((ent->d_type) == 8) //if text file
                 {
                     char *fpath = (char *)malloc(256);
                     strcat(fpath, argv[i + 1]);
@@ -289,13 +289,13 @@ int main(int argc, char **argv)
     }
 
     pthread_t pthreads;
-    pthread_create(&pthreads, NULL, handleFile, Allpaths);
+    pthread_create(&pthreads, NULL, handleFile, Allpaths);//file handling
 
     pthread_t cthreads[NUM_THREADS];
 
     for (int i = 0; i < NUM_THREADS; i++)
     {
-        pthread_create(&cthreads[i], NULL, compressText, NULL);
+        pthread_create(&cthreads[i], NULL, compressText, NULL);//compress content in buffer
     }
     pthread_join(pthreads, NULL);
 
