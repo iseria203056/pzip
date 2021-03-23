@@ -1,15 +1,4 @@
-/*
- * NOTE TO STUDENTS: Before you do anything else, please
- * provide your group information here.
- *
- * Group No.: 39 (Join a project group in Canvas)
- * First member's full name: Wong Chi Ho
- * First member's email address: chwong699-c@my.cityu.edu.hk
- * Second member's full name: Leung Yiu Kwong
- * Second member's email address: ykleung64-c@my.cityu.edu.hk
- * Third member's full name:
- * Third member's email address:
- */
+
 
 #include <pthread.h>
 #include <stdio.h>
@@ -245,8 +234,8 @@ void output()// print out the zipped content
 }
 int main(int argc, char **argv)
 {
-    NUM_THREADS = get_nprocs();
-    if (argc < 2)
+    NUM_THREADS = get_nprocs();//get how many threads can use
+    if (argc < 2)//input format error
     {
         printf("pzip: file1 [file2 ...]\n");
         exit(1);
